@@ -1,0 +1,32 @@
+# The URL the site will be built for
+base_url = "https://nagamitesh.github.io/fastrobots-naga/"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
+
+theme = "apollo"
+taxonomies = [{ name = "tags" }]
+
+[extra]
+theme = "auto"
+socials = [
+  # Configure socials here
+]
+menu = [
+  # Configure menu bar here
+]
+
+# See this for more options: https://github.com/not-matthias/apollo/blob/main/config.toml#L14
+
+
+
+
+
+
+
+
+
+
