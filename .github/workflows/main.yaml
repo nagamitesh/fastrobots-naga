@@ -44,3 +44,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+        
+#this is page on how to deploy zola easily because i couldnt figure out any of the other ways ngl https://devleon.com/posts/zola/#the-better-way
