@@ -9,4 +9,4 @@ local_image = ""
 tags = ["artemis", "bluetooth", "ardunio", "sparkfun"]
 +++
 
-![ProfilePic](./ProfilePic.jpg)
+## Prelab

@@ -1,5 +1,6 @@
 # The URL the site will be built for
 base_url = "https://nagamitesh.github.io/fastrobots-naga/"
+title = "naga's fast robot"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -13,7 +14,7 @@ taxonomies = [{ name = "tags" }]
 [extra]
 theme = "light"
 socials = [
-  # Configure socials here
+  { name = "linkedin", url = "https://www.linkedin.com/in/nagamitesh-nagamuralee/", icon = "linkedin" }
 ]
 menu = [
     { name = "/home", url = "/", weight = 3 },
