@@ -12,6 +12,7 @@ theme = "apollo"
 taxonomies = [{ name = "tags" }]
 
 [extra]
+toc = true
 theme = "light"
 socials = [
   { name = "linkedin", url = "https://www.linkedin.com/in/nagamitesh-nagamuralee/", icon = "linkedin" }
