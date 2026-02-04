@@ -17,12 +17,18 @@ template = "homepage.html"
     font-size: 1.25rem;
     margin-bottom: 1rem;
 
+.hero-image {
+    width: 200px;         /* Adjust size as needed */
+    height: 200px;        /* Keep square for a circle look */
+    object-fit: cover;    /* Prevents stretching */
+    border-radius: 50%;   /* Makes the image a circle */
+    margin: 1rem 0;       /* Adds spacing above and below */
+}
 </style>
 
 <div class="homepage-hero">
     <h1 class="homepage-hero-title">Nagamitesh Nagamuralee <br> ECE 4160</h1>
-    <p class="homepage-hero-subtitle">Hi, this is my page for ECE 4160 Fast Robots at Cornell University.  I am a Junior at Cornell University majoring in Mechanical Engineering with a minor in Electrical Engineering. I’m passionate about all things aerospace and am currently the Structures Lead of Cornell Rocketry, a student-run project team focusing on building and launching a 10000 foot apogee hybrid rocket. I’m also really passionate about robotics, biking, and drumming, and you can find me in Lincoln Hall many times a week playing percussion!</p>
-    <img src="../static/ProfilePic.jpg" alt="Profile Picture">
+    <p class="homepage-hero-subtitle">Hi, this is my page for ECE 4160 Fast Robots at Cornell University.  I am a Junior at Cornell University majoring in Mechanical Engineering with a minor in Electrical Engineering. I’m passionate about all things aerospace and am currently the Structures Lead of Cornell Rocketry, a student-run project team focusing on building and launching a 10000 foot apogee hybrid rocket. I’m also really passionate about robotics, biking, and drumming, and you can find me in Lincoln Hall many times a week playing percussion!</p> 
 </div>
 
 # Labs

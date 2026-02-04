@@ -11,13 +11,15 @@ theme = "apollo"
 taxonomies = [{ name = "tags" }]
 
 [extra]
-theme = "auto"
+theme = "light"
 socials = [
   # Configure socials here
 ]
 menu = [
-  # Configure menu bar here
+    { name = "/home", url = "/", weight = 3 },
+    { name = "/labs", url = "/labs", weight = 4 },
 ]
+
 
 # See this for more options: https://github.com/not-matthias/apollo/blob/main/config.toml#L14
 
