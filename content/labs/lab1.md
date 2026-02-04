@@ -35,7 +35,7 @@ Running the example Blink file, video below of my board executing the blink exam
 
 ### Serial
 Running the example serial file, and the image below shows the serial output of the example code.
-{{image(path = "public\images\Screenshot 2026-01-21 092055.png",src = "public\images\Screenshot 2026-01-21 092055.png", alt = "Serial Example Output")}}
+{{image(path = "./images/Screenshot 2026-01-21 092055.png",src = "./images/Screenshot 2026-01-21 092055.png", alt = "Serial Example Output")}}
 
 ### Analog Read
 Here I am running the Analog Read example, and during the test I'm putting my finger on the CPU which is showing an increase in the temperature counts due to the increase in the temperature that the CPU is seeing.
@@ -56,7 +56,7 @@ I read through the linked page from Arduino about BLE and the main thing that I 
 For python I chose to go with my existing instalation of 3.13.5 that I use through anaconda, and for the set up steps I had no issues with compatability or the like. The only trouble that I ran into was that I had to use my admin account to install virtualenv but other than that I was able to do the rest of the steps straight forwardly. I was also able to set up my virtual environment and install all the packages, but when using juypter server later I did notice that my packages were only accessible through juypter lab and not general VS Code because I wasn't able to figure out how to have VS Code compile/run using the juypter lab python. This might be something I look into later if I have the time. 
 
 Going through the rest of the setup, I first got the MAC address from my arduino using the ble_arduino.ino file from the codebase. The MAC adress is screenshotted below. 
-{{image(width = 500, path = "public\images\Screenshot 2026-01-28 095920.png",src = "public\images\Screenshot 2026-01-28 095920.png", alt = "MAC Address")}}
+{{image(width = 500, path = "./images/Screenshot 2026-01-28 095920.png",src = "./images/Screenshot 2026-01-28 095920.png", alt = "MAC Address")}}
 
 ### Codebase
 I was able to cleanly unzip the lab codebase into my project directory. From reading through the code base I first found that it is essentially split into 2 different sections, one for the arduino and one for the computer on python. For the arduino the main piece of code is an .ino file that sets up BLE and allows for characteristics to be initialized. This .ino also provides the basic functionalities of being able to read data, write data, and also listen for any connections. Then reading through the python part of the code base, specifically the ble.py and demo.ipynb I found that the python code base is used for intializing the connection to the Artemis and sending instructions to the Artemis, and it has useful functions to scan, send commands, and recieve data from the Artemis, and since this is in python this will also allow for easy parsing and manipulation of the data.  
@@ -76,16 +76,16 @@ ble_service: '34d66db7-fb82-4a1b-a60a-923a2442615d'
 I double checked that the UUIDs match and that the CommandTypes match between both the python and the arduino libraries as well. I then ran through the demo.ipynb, I first ran into an issue where none of the cells were working due to library and connection errors, but with TA help I was able to find that the issue was because I didn't scroll high enough on demo.ipynb and didn't run the intialization cells to set up the connection, and I need to ensure to do that in the future. Below are images showing my results.
 
 Successful Connection shown below.           
-{{image(width = 900, path = "public\images\Screenshot 2026-02-04 051911.png",src = "public\images\Screenshot 2026-02-04 051911.png", alt = "Successful Connection")}}
+{{image(width = 900, path = "./images/Screenshot 2026-02-04 051911.png",src = "./images/Screenshot 2026-02-04 051911.png", alt = "Successful Connection")}}
 
 Demo Python commands sent and the responses recieved below. 
-{{image(width = 900, path = "public\images\Screenshot 2026-01-28 102941.png",src = "public\images\Screenshot 2026-01-28 102941.png", alt = "Demo Python Connections")}}
+{{image(width = 900, path = "./images/Screenshot 2026-01-28 102941.png",src = "./images/Screenshot 2026-01-28 102941.png", alt = "Demo Python Connections")}}
 
 Demo code sent into Artemis from python and the response given by arduino.
 ```python
 ble.send_command(CMD.SEND_TWO_INTS, "2|-6")
 ```
-{{image(width = 900, path = "public\images\Screenshot 2026-01-28 103018.png",src = "public\images\Screenshot 2026-01-28 103018.png", alt = "2 Ints Demo")}}
+{{image(width = 900, path = "./images/Screenshot 2026-01-28 103018.png",src = "./images/Screenshot 2026-01-28 103018.png", alt = "2 Ints Demo")}}
 
 All demo tasks ran successfully. 
 
@@ -121,7 +121,7 @@ case ECHO:
             break;
 ```
 The output back to the computer is following.
-{{image(width = 900, path = "public\images\Screenshot 2026-02-04 065227.png",src = "public\images\Screenshot 2026-02-04 065227.png", alt = "Echo Output")}}
+{{image(width = 900, path = "./images/Screenshot 2026-02-04 065227.png",src = "./images/Screenshot 2026-02-04 065227.png", alt = "Echo Output")}}
 
 ### Get 3 Floats
 First for the python script sending command containing the SEND_THREE_FLOATS command and adding 3 floats delineated by the straight line character. I am using a very similar set up to the SEND_TWO_INTS command given as part of the code base, and essentially just switching out the integers for floats. This means that I am intializing 3 floats, and then using the get next value command to get next value to store in the floats. 
@@ -160,7 +160,7 @@ case SEND_THREE_FLOATS:
     break;
 ```
 The output from the Artemis was as following.
-{{image(width = 500, path = "public\images\Screenshot 2026-02-04 064815.png",src = "public\images\Screenshot 2026-02-04 064815.png", alt = "3 Floats Output")}}
+{{image(width = 500, path = "./images/Screenshot 2026-02-04 064815.png",src = "./images/Screenshot 2026-02-04 064815.png", alt = "3 Floats Output")}}
 
 ### Get Time Millis
 Here I added a new command GET_TIME_MILLIS to the ble_arduino (I added as a new case) and cmd_types.py scripts. For the arduino script I used the millis() command to get the current number of milliseconds and append that to a T: string in the characteristic. On the python side, I passed a blank string with the GET_TIME_MILLIS command and printed out the string that was sent back to the python script. I also ran into an error where I first didn't add GET_TIME_MILLIS into the enum command types at the top of ble_arduino, but after that my new command worked. I also had a scoping issue, I am not sure why, but adding curly brackets around my GET_TIME_MILLIS function solved that problem. Also learned that when adding new commands need to reimport CMD so the new commands show up in python. 
@@ -188,7 +188,7 @@ case GET_TIME_MILLIS: {
 }
 ```
 The output back to the computer is following.
-{{image(width = 700, path = "public\images\Screenshot 2026-02-04 072140.png",src = "public\images\Screenshot 2026-02-04 072140.png", alt = "Get Time Millis Output")}}
+{{image(width = 700, path = "./images/Screenshot 2026-02-04 072140.png",src = "./images/Screenshot 2026-02-04 072140.png", alt = "Get Time Millis Output")}}
 
 
 # Discussion
