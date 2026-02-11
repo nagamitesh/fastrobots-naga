@@ -6,7 +6,7 @@ date = 2026-01-28
 
 [extra]
 local_image = ""
-tags = ["artemis", "bluetooth", "ardunio", "sparkfun"]
+tags = ["artemis", "bluetooth", "arduino", "sparkfun"]
 +++
 <style>
 h1 {
@@ -190,9 +190,150 @@ case GET_TIME_MILLIS: {
 The output back to the computer is following.
 {{image(width = 700, path = "./images/Screenshot 2026-02-04 072140.png",src = "./images/Screenshot 2026-02-04 072140.png", alt = "Get Time Millis Output")}}
 
+### Notification Handler
+Here creating a notification handler to recieve string value and then extracting the time from the string. I'm defining a new function to act as the notification handler, and in that function I am going to do string operations to only output the time in milliseconds instead of the whole string. I also have this function discern if it is a time function or not and if it is it will just seperate the millis and print that only.
+```python
+def notif_handler (uuid, byteArray):
+    rec_string = ble.bytearray_to_string(byteArray)
+    strArray = s.split(" ") #using space as a delimeter since my output from arduino is T: nnnnn and thus space will split it perfectly
+
+    #using this if statement so that if the recieved string is not the time string it prints the whole thing instead of just the millis 
+    if strArray[0] == "T:":
+        print(strArray[1])
+    else:
+        print(rec_string)
+```
+This is the code I had for starting the recieving. I also had to made sure I only started it once or else it caused repeated outputs.
+```python
+ble.start_notify(ble.uuid['RX_STRING'], notif_handler) #starting notify with notif handler
+```
+Then by using the command sending the get_millis command, I got the following result.
+{{image(path = "./images/Screenshot 2026-02-11 035816.png",src = "./images/Screenshot 2026-02-11 035816.png", alt = "Millis Output")}}
+
+My handler still preserves outputs for other commands as well as shown below. (printing twice here since code already has a print and my handler does too)
+{{image(path = "./images/Screenshot 2026-02-11 035947.png",src = "./images/Screenshot 2026-02-11 035947.png", alt = "Millis Output")}}
+
+### Millis Loop
+Here I made a new command called MillisLoop which will call on the Artemis to send millisecond times with numbers prefixed to the time to show the number of commands that are able to be sent.
+
+This is the code I added to the arduino side.
+```cpp
+/* Case for Lab 1 Task 5*/
+case MILLIS_LOOP: {
+    int num = 0;
+    unsigned int long startingTime = millis();
+
+    while(millis()-startingTime < 5000){ //doing this loop for 5 seconds for this test
+        //using similar string output structure to get_time_millis
+        tx_estring_value.clear();
+        tx_estring_value.append(num); //to keep count
+        tx_estring_value.append(": ");
+        tx_estring_value.append((int long) millis());
+        tx_characteristic_string.writeValue(tx_estring_value.c_str());
+        num++;
+    }
+    break;
+}
+```
+My command in Python: "ble.send_command(CMD.MILLIS_LOOP,"")" and that resulted in the following output.
+{{image(path = "./images/Screenshot 2026-02-11 042949.png",src = "./images/Screenshot 2026-02-11 042949.png", alt = "Millis Loop Output")}}
+
+
+From this I found that 262 values were transmitted starting from 238457.000 to 243419.000 which is 4962 ms giving 18.93 ms per value transmitted, and since most of my strings had 15 bytes that means that each byte took 1.262 ms thus 1000ms/1.262 ms gives 792 bytes/second.
+
+### Time Array
+Here I am creating SEND_TIME_DATA to fill a time array, and I am creating the array as a global variable and intializing it to a length of 4000 elements. I'm then adding millis to each of the elements until the array is filled and then using a similar output to MILLIS_LOOP to send back the data to the python script to be displayed. 
+
+What I added to the global variables.
+```cpp
+const int arraySize = 4000;
+float timeArray[arraySize];
+```
+This is what I created as part of the SEND_TIME_DATA function on the arduino side.
+```cpp
+/* Case for Lab 1 Task 6*/
+        case SEND_TIME_DATA: {
+            int num = 0;
+            long startingTime = millis();
+
+            while ((millis()-startingTime < 5000) && (num < arraySize)){ //doing till 5 seconds or the array is filled
+                timeArray[num] = (float) millis();
+                num++;
+            }
+
+            num = 0;//resetting the number count
+
+            while(num < arraySize){ //doing this loop for 5 seconds for this test
+                //using similar string output structure to millis_loop
+                tx_estring_value.clear();
+                tx_estring_value.append(num); //to keep count
+                tx_estring_value.append(": ");
+                tx_estring_value.append(timeArray[num]);
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                num++;
+            }
+            break;
+        }
+```
+This is the output that I recieved here showing that all of the data was transmitted. 
+{{image(path = "./images/Screenshot 2026-02-11 050315.png",src = "./images/Screenshot 2026-02-11 050315.png", alt = "Store in Array and Send")}}
+
+### Time and Temp Array
+Here the code on the arduino side is going to be very similar to the send time array function but the main difference is going to be that there is also going to be the temp portion added and I am going to make sure that they are written concurrently and when displaying split the different sections with white space so that I am able split it up and display it as I need. I will also edit the notification handler to make a new case where it stores it to a list and displays the strings in a new case. I also added tempArray to the global variables. I also added a delay in the data storing section of 30 ms so that it doesn't fill the array super fast.
+
+Arduino function is below.
+```cpp
+/* Case for Lab 1 Task 7*/
+        case GET_TEMP_READINGS: {
+            int num = 0;
+            long startingTime = millis();
+
+            while ((millis()-startingTime < 5000) && (num < arraySize)){ //doing till 5 seconds or the array is filled
+                timeArray[num] = (float) millis();
+                tempArray[num] = (float) getTempDegF();
+
+                delay(30); //delay to ensure array not filled ot fast and not repeated values
+                num++;
+            }
+
+            num = 0;//resetting the number count
+
+            while ((num < arraySize) && (timeArray[num] != 0)){ //doing this loop for 5 seconds for this test
+                //using similar string output structure to millis_loop
+                tx_estring_value.clear();
+                tx_estring_value.append(num); //to keep count
+                tx_estring_value.append(" Time|Temp: ");
+                tx_estring_value.append(timeArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(tempArray[num]);
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                num++;
+            }
+            break;
+        }
+```
+The changed notification handler.
+```python
+def notif_handler(uuid, byteArray):
+    rec_string = ble.bytearray_to_string(byteArray)
+    strArray = rec_string.split(" ") #using space as a delimeter since my output from arduino is T: nnnnn and thus space will split it perfectly
+
+    #using this if statement so that if the recieved string is not the time string it prints the whole thing instead of just the millis 
+    if strArray[0] == "T:":
+        print(strArray[1])
+    elif strArray[1] == "Time|Temp:":
+        print(strArray[0] + "|Time: " + strArray[2] + " |Temp: " + strArray[3])
+    else:
+        print(rec_string)
+```
+This is the final result that I got out of this by calling the function.
+{{image(path = "./images/Screenshot 2026-02-11 052948.png",src = "./images/Screenshot 2026-02-11 052948.png", alt = "Store in Array and Send")}}
+
+### Which Method is Better?
+I think that the method used in part 5 is more effective when you want to do concurrent processing because the artemis will transmit the data as soon as it is ready which means that the python script can start processing that very fast. On the other hand the second method is much better for faster processing on the Artemis because it can store and do things with results much faster than it can transmit that data, so this would be better for doing a batch of processing onboard and then transmitting the result. The second method can record data almost instantly as seen in the time loop because the 4000 cell array filled within the second that I sent the command which is really fast. Assuming that I'm storing things as floats which is 4 bytes, the 384 kB is 384000 bytes and thus I can store 96000 floats, so my array can be 96000 elements long (assuming no other overheads).
 
 # Discussion
 I think the biggest thing that I took away from the lab was how many different components go into making all of the devices I use daily talk to eachother, even making the Artemis talk in small chunks to my computer was hard, I can't imagine the amount of work it would take to make something like bluetooth headphones work. I think the thing that still stumps me and a big challenge is the scope issue I had on task 3 for 1B, I'm not sure why that arose, and I'm curious to figure out a fix for that. I overall learned how to communicate across python and the Artemis with bluetooth, how to add my own commands, and how to set up my environment for future development.
 
 # Collaboration
-I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 1B. I used Google Gemini to help me understand compile errors, and to trouble shoot image addition to my website. I used Daria's guide on Zola to create the website.
+I referenced Trevor Dales, Sarah Grace Brown, and  Lucca Correia's websites for issues I faced in Lab 1B. I used Google Gemini to help me understand compile errors, and to trouble shoot image addition to my website. I used Daria's guide on Zola to create the website.
