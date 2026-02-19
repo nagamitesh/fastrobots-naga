@@ -120,11 +120,68 @@ Here is my conversion code that I added.
     Serial.print(" ,Roll ");
     Serial.println(roll);
 ```
-Here is a video showing the output as I tilted my IMU to the various pitch and roll amounts. I also attached my IMU to a rubiks cube to get a more accurate angle measurement and then measured both 90 and -90 degrees for each axes and used the difference from expected to find a XXXX conversion factor for roll and XXX for pitch. 
+Here is a video showing the output as I tilted my IMU to the various pitch and roll amounts. I also attached my IMU to a rubiks cube to get a more accurate angle measurement and then measured both 90 and -90 degrees for each axes and I found that each measurement was around 3 degrees off (roughly 3.33% error) so to make that more accurate I did a 2 point calibration. To find the conversion factor I used the total range expected over total range measured and found a 1.0285 multiplicative conversion factor for both roll and pitch. 
+
+<iframe src="https://drive.google.com/file/d/1mOb23JpnVDR3Q5zVH9h-l4XcAZoe6yyH/preview" width="400" height="900"></iframe>
+
+Here is what it it was for -90,0,90 degrees pitch and roll respectively before the calibration.
+{{image(path = "./images/Screenshot 2026-02-19 032838.png",src = "./images/Screenshot 2026-02-19 032838.png", alt = "Artemis with IMU Connection")}}
+
+After the calibration this was the result. (this is a lot closer to expected)
+{{image(path = "./images/Screenshot 2026-02-19 042027.png",src = "./images/Screenshot 2026-02-19 042027.png", alt = "Artemis with IMU Connection")}}
+
+### Graphing Function
+To make graphing the roll and pitch data easier later I chose to use a function similar to the save data and send in a big bunch function that we made for temperature and time in lab 1. Here I added a roll and pitch column instead of temperature and still used time, I also set up a condition in my notification handler to parse this data and made a seperate function to store the roll, pitch, and time in an array.
+
+Here is my arduino code.
+```cpp
+case GET_ROLL_PITCH_ARR: {
+            int num = 0;
+            long startingTime = millis();
+            float pitch = 0;
+            float roll = 0;
+            memset(timeArray, 0, arraySize); /*intializing to 0 incase ran before to prevent excess printing*/
+            
+
+            while ((millis()-startingTime < 5000) && (num < arraySize) && myICM.dataReady()){ //doing till 5 seconds or the array is filled
+                myICM.getAGMT();
+                timeArray[num] = (double) millis();
+
+                pitch = atan2(myICM.accX(), myICM.accZ()) * 180 / M_PI; 
+                roll  = atan2(myICM.accY(), myICM.accZ()) * 180 / M_PI;
+
+                pitch = (1.0285 * pitch);
+                roll = (1.0285 * roll);
+                
+                rollArray[num] = roll;
+                pitchArray[num]= pitch;
+
+                delay(35); //delay to ensure array not filled to fast and not repeated values
+                num++;
+            }
+
+            num = 0;//resetting the number count
+
+            while ((num < arraySize) && (timeArray[num] != 0)){ //doing this loop for 5 seconds for this test
+                //using similar string output structure to millis_loop
+                tx_estring_value.clear();
+                tx_estring_value.append(num); //to keep count
+                tx_estring_value.append(" T|R|P: ");
+                tx_estring_value.append(timeArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(rollArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(pitchArray[num]);
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                num++;
+            }
+            break;
+        }
+```
+
+Here is my python code for my array storing.
 
 
-
-Here is what it it was for -90,0,90 degrees pitch and roll respectively.
 
 
 
