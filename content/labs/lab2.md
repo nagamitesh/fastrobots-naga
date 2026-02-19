@@ -106,6 +106,27 @@ Below is the code that I added to my setup() function.
     digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
     delay(1000);                  
 ```
+## Accelerometer
+### Equations to Convert Pitch and Roll
+From the lecture I found that the equation for converting is simply just the atan of x and z for pitch and roll is atan2 of y and z. Using this I implemented the following code in the example IMU code to show the pitch and roll of the IMU. I also had to include the math.h library to make this work. 
+
+Here is my conversion code that I added.
+```cpp
+ pitch = atan2(myICM.accX(), myICM.accZ()) * 180 / M_PI; 
+    roll  = atan2(myICM.accY(), myICM.accZ()) * 180 / M_PI;
+
+    Serial.print("Pitch: ");
+    Serial.print(pitch);
+    Serial.print(" ,Roll ");
+    Serial.println(roll);
+```
+Here is a video showing the output as I tilted my IMU to the various pitch and roll amounts. I also attached my IMU to a rubiks cube to get a more accurate angle measurement and then measured both 90 and -90 degrees for each axes and used the difference from expected to find a XXXX conversion factor for roll and XXX for pitch. 
+
+
+
+Here is what it it was for -90,0,90 degrees pitch and roll respectively.
+
+
 
 # Discussion
 

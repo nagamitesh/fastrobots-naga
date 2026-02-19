@@ -14,6 +14,8 @@ taxonomies = [{ name = "tags" }]
 [extra]
 toc = true
 theme = "light"
+mathjax = true
+mathjax_dollar_inline_enable = true
 socials = [
   { name = "linkedin", url = "https://www.linkedin.com/in/nagamitesh-nagamuralee/", icon = "linkedin" }
 ]
