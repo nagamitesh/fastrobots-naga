@@ -190,4 +190,4 @@ Here is my python code for my array storing.
 
 # Collaboration
 
-I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 1B. I used Google Gemini to help me understand compile errors, and to trouble shoot image addition to my website.
+I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 2. I used Google Gemini to help me understand compile errors.
