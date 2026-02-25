@@ -31,7 +31,7 @@ For my robot I am choosing to address both of the ToF sensors concurrently using
 
 ## Placement of the ToF Sensor
 I chose to place one of my sensors in front of my car to avoid obstacles that my car will run into while driving straight and I also chose to place my other sensor on the side of my car to allow for avoidance of walls or for keeping a distance from a wall so that the robot wont drive into obstacles on the side. I also used a short wire on the side to allow for this and a long wire for the front. My vision of how I want to mount these components is shown here. This does mean that my car will miss obstacles that is on its left side and back.
-{{image(path = "./images/IMG_8533_result2.JPG",src = "./images/IMG_8533_result2.JPG", alt = "Layout Of Sensors")}}
+{{image(path = "./images/IMG_8533_result2.jpg",src = "./images/IMG_8533_result2.jpg", alt = "Layout Of Sensors")}}
 
 ## Wiring
 Since I chose to put a sensor in the front and the side I will be using the longer QWIIC wire to attach to the front ToF sensor and the short QWIIC wire to attach the side one since it only has to go a shorter distance. Using the QWIIC wire also allows the sensors to be detached incase there needs to be a physical disconnect to set up the different sensors and also allows for easier troubleshooting as well. The connection between the ToF sensor and the wire can be permenant for this reason and I soldered the wires through the back so that they will not interfere with attaching the sensor to the robot. I did not cut the wires short and preserved as much of the length as possible so that I could keep the flexibility of slightly changing position later if needed. My wiring diagram is below, and I followed the color convention of the QWIIC wire with the ToF sensor labelled pins.
@@ -41,14 +41,14 @@ Since I chose to put a sensor in the front and the side I will be using the long
 # Lab Tasks
 ## Soldering the Battery Connector
 I soldered a new connector to the LiPO to allow for connection to the Artemis, picture of that connection is below.
-{{image(path = "./images/IMG_8531_result.JPG",src = "./images/IMG_8531_result.JPG", alt = "Layout Of Sensors")}}
+{{image(path = "./images/IMG_8531_result.jpg",src = "./images/IMG_8531_result.jpg", alt = "Layout Of Sensors")}}
 
 ## ToF Setup and Soldering
 I downloaded the library, wired the breakout board, and also soldered the connectors to the ToF sensors based on my wiring diagram. Through the QWIIC documentation I found that the blue wire is for SDA and yellow is for SCL. Below are images of my completed sensors and wiring. 
 
-{{image(path = "./images/IMG_8534_result.JPG",src = "./images/IMG_8534_result.JPG", alt = "Short Cable Sensor")}}
-{{image(path = "./images/IMG_8535_result.JPG",src = "./images/IMG_8535_result.JPG", alt = "Long Cable Sensor")}}
-{{image(path = "./images/IMG_9035_result.JPG",src = "./images/IMG_9035_result.JPG", alt = "Layout Of Sensors Soldered")}}
+{{image(path = "./images/IMG_8534_result.jpg",src = "./images/IMG_8534_result.jpg", alt = "Short Cable Sensor")}}
+{{image(path = "./images/IMG_8535_result.jpg",src = "./images/IMG_8535_result.jpg", alt = "Long Cable Sensor")}}
+{{image(path = "./images/IMG_9035_result.jpg",src = "./images/IMG_9035_result.jpg", alt = "Layout Of Sensors Soldered")}}
 
 ## ToF I2C
 To find and test the I2C address of the sensor I connected just one sensor to the Artemis and used the recommended Wire_I2C example to find the I2C address of the ToF sensor. I found that the address was 0x29. This is different than the 0x52 and I noted that 0x29 becomes 0010 1001 in 8 bit binary and 0x52 becomes 0101 0010. I also noticed that in the wire code the for loop to execute the serial print only activates if the address is under 127 which is a 7 bit number, so I believe that by default an I2C address is only supposed to be a 7 bit number such as what 0x29 is and the last bit is used for read or write designation as is explained in the data sheet, so since here we are reading from the sensor the I2C address is left shifted and a 0 is appended, which gives 0x52 in binary since 0010 1001 (0x29) left-shifted is 0101 0010 (0x52) which is what is detailed in the ToF manual. Thus this information corroborates the manual's address.
