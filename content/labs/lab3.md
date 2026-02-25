@@ -35,7 +35,7 @@ I chose to place one of my sensors in front of my car to avoid obstacles that my
 
 ## Wiring
 Since I chose to put a sensor in the front and the side I will be using the longer QWIIC wire to attach to the front ToF sensor and the short QWIIC wire to attach the side one since it only has to go a shorter distance. Using the QWIIC wire also allows the sensors to be detached incase there needs to be a physical disconnect to set up the different sensors and also allows for easier troubleshooting as well. The connection between the ToF sensor and the wire can be permenant for this reason and I soldered the wires through the back so that they will not interfere with attaching the sensor to the robot. I did not cut the wires short and preserved as much of the length as possible so that I could keep the flexibility of slightly changing position later if needed. My wiring diagram is below, and I followed the color convention of the QWIIC wire with the ToF sensor labelled pins.
-{{image(path = "./images/IMG_1930.PNG",src = "./images/IMG_1930.PNG", alt = "Wiring Diagram")}}
+{{image(path = "./images/IMG_1931.PNG",src = "./images/IMG_1931.PNG", alt = "Wiring Diagram")}}
  
 
 # Lab Tasks
@@ -50,6 +50,8 @@ I downloaded the library, wired the breakout board, and also soldered the connec
 {{image(path = "./images/IMG_8535_result.JPG",src = "./images/IMG_8535_result.JPG", alt = "Long Cable Sensor")}}
 {{image(path = "./images/IMG_9035_result.JPG",src = "./images/IMG_9035_result.JPG", alt = "Layout Of Sensors Soldered")}}
 
+## ToF I2C
+To find and test the I2C address of the sensor I connected just one sensor to the Artemis and used the recommended Wire_I2C example to find the I2C address of the ToF sensor. I found that the address was 
 ## Dealing with Double Sensor Problem
 Based on the Artemis pinouts, I found that I need a GPIO pin that can control high and low to operate the XSHUT so that I can decide which sensor to assign a different address too, and chose pin 8 since it didn't have a secondary function and was not an ADC either. I decided to solder the XSHUT pin on the right sensor since it has a shorter cable thus shorter run of wire needed.
 
