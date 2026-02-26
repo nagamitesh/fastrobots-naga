@@ -183,10 +183,14 @@ Here is my python code for my array storing.
 
 
 
+## Stunt Recording
+I recorded a few videos of my robot in action and did a few stunts. I broke off one of my wheels sadly but with a bit of epoxy I was able to put it back on fully. I can see that the robot travels very rapidly and I hope to emulate that with my system in the future as well. I also saw it was easiest to do flips and full rotations or drifts when moving with the robot.
 
+<iframe src="https://drive.google.com/file/d/1-VR5TL14aKD05GZruwNMni9cD97-n0AZ/preview" width="640" height="480"></iframe>
+<iframe src="https://drive.google.com/file/d/1igFvrzx4Z1U-Nc5govVjVQhSuZshE1KG/preview" width="640" height="480"></iframe>
 
 # Discussion
-
+It was really cool to play around with the car and I was amazed how fast the car could move as well and I'm super pumped to see how we can control it ourselves.
 
 # Collaboration
 
