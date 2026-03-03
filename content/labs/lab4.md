@@ -38,4 +38,4 @@ I am ensuring all of my pins are PWM capable. I am finding if pins are PWM capab
 
 
 # Collaboration
-I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results. I also worked with Aidan Chan to find pins for my board. 
+I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results. I also worked with Aidan Chan to find pins for my board. Also reffered to Aidan Derocher's page for wiring help.

@@ -72,15 +72,50 @@ I used my setup to accurately measure 6 inches and left my sensor to keep readin
 Based on the plot I found that the repeatability is generally within 0.1 of an inch even if the object is not moving at all and generally the measurements are pretty close to the expected measurement. I also found that the sensor reads in bins of 0.04 inches and that is something to keep in mind if I see repeated measurements in the future as well. I think that this is due to the conversion between the millimeter reading to the inches that are being displayed. 
 
 ### Ranging Time
+Since the data is only collected when the sensor is ready I can use the time stamps of the serial output to find the time. I found through looking through the video that the rough time is around 101.4 milliseconds between each of the times.
+
+This is the time information that was calculated. 
+
+{{image(path = "./images/Screenshot 2026-02-27 221030.png",src = "./images/Screenshot 2026-02-27 221030.png", alt = "Ranging Time Differences")}}
+
 
 ## Dealing with Double Sensor Problem
 Based on the Artemis pinouts, I found that I need a GPIO pin that can control high and low to operate the XSHUT so that I can decide which sensor to assign a different address too, and chose pin 8 since it didn't have a secondary function and was not an ADC either. I decided to solder the XSHUT pin on the right sensor since it has a shorter cable thus shorter run of wire needed.
 
-Here is the code I used to intialize the sensors seperately by assigning a new value to them.
+Here is the code I used to intialize the sensors seperately by assigning a new I2C address to one of them and initializing 2 instances of the distance sensor. The code to read it was based on the example code for sensor reading and I collected the data seperately and displayed them seperately. 
 
+```cpp
+  Wire.begin();
+
+  Serial.begin(115200);
+  Serial.println("VL53L1X Qwiic Test");
+
+  digitalWrite(XSHUT_PIN, LOW); //shutting down the side sensor
+  distanceSensor1.init(); //starting the first sensor
+  distanceSensor1.setI2CAddress(0xf5); 
+  
+  if (distanceSensor1.begin() == 0){ //0 means it intialized well
+    Serial.println("Started Sensor 1");
+  }
+  distanceSensor1.setDistanceModeShort();
+  
+  digitalWrite(XSHUT_PIN, HIGH); //start the side sensor again
+  if (distanceSensor2.begin() == 0){ //0 means it intialized well
+    Serial.println("Started Sensor 2");
+  }
+  distanceSensor2.setDistanceModeShort();
+```
+
+Here is a video of the 2 sensor readings working. 
+<iframe src="https://drive.google.com/file/d/1rqJ18Yy7_rFAX-9NBbvHBJRvxxoBEe60/preview" width="640" height="480"></iframe>
+
+## Measurement Timing
+Here I printed out the millisecond time as ranging continued and I checked if the sensors had data ready on every loop and printed out when they had data ready. A video of the behavior is below. In the video I can see that the time is printed out much faster and I can see that the loop executes in 5 milliseconds because that is the difference between each of the times that is outputted, between each output of each distance sensor I found that there is 56 milliseconds of difference and that means that the polling of the sensor is around 10 times slower than the execution time of the loop. I think that the current limiting factor is polling the sensor and also how fast the sensor can collect data is what is slowing down how long it takes for new data to be printed. 
+
+<iframe src="https://drive.google.com/file/d/1S8cdYNAhzh3wUfpJvDA6IiTuymYj7bnd/preview" width="900" height="480"></iframe>
 
 # Discussion
 One great learning was that taking the protective film off really does improve the measurements lol, and after taking the film off my measurements improved a lot.
 
 # Collaboration
-I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results.
+I referenced Trevor Dales, Lucca Correia, and Sarah Grace Brown's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results, and also for finding the difference in time between the time stamps.
