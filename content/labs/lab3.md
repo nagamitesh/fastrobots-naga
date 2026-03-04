@@ -114,8 +114,135 @@ Here I printed out the millisecond time as ranging continued and I checked if th
 
 <iframe src="https://drive.google.com/file/d/1S8cdYNAhzh3wUfpJvDA6IiTuymYj7bnd/preview" width="900" height="480"></iframe>
 
+Here is the code I used to make this happen.
+```cpp
+distanceSensor1.startRanging(); //write configuration bytes to initiate measurement
+  distanceSensor2.startRanging(); //write configuration bytes to initiate measurement
+
+  Serial.print(String(millis()));
+  if (distanceSensor1.checkForDataReady()){
+    int distance1 = distanceSensor1.getDistance(); //get the result of the measurement from the sensor
+    
+    distanceSensor1.clearInterrupt();
+    distanceSensor1.stopRanging();
+    
+
+    Serial.print("Distance1(mm): ");
+    Serial.print(distance1);
+
+  }
+
+  if(distanceSensor2.checkForDataReady()){
+    int distance2 = distanceSensor2.getDistance(); //get the result of the measurement from the sensor
+    distanceSensor2.clearInterrupt();
+    distanceSensor2.stopRanging();
+
+    Serial.print(" Distance2(mm): ");
+    Serial.print(distance2);
+  }
+
+  Serial.println();
+```
+
+## Sending Data Over Bluetooth
+Here to execute this I will be using the code that I made for temperature and time in lab 1 and adding new arrays to store the data from the distance sensors and then send that over to the python script.
+
+```cpp
+case GET_IMU_TOF: {
+            int num = 0;
+            long startingTime = millis();
+            float pitch = 0;
+            float roll = 0;
+            float distance1 = 0;
+            float distance2 = 0;
+            memset(timeArray, 0, arraySize); /*intializing to 0 incase ran before to prevent excess printing*/
+            
+            distanceSensor1.startRanging(); //write configuration bytes to initiate measurement
+            distanceSensor2.startRanging();
+
+            while ((millis()-startingTime < 5000) && (num < arraySize)){ //doing till 5 seconds or the array is filled
+                timeArray[num] = (double) millis();
+                if (myICM.dataReady()){
+                    myICM.getAGMT();
+                
+
+                    pitch = atan2(myICM.accX(), myICM.accZ()) * 180 / M_PI; 
+                    roll  = atan2(myICM.accY(), myICM.accZ()) * 180 / M_PI;
+
+                    pitch = (1.0285 * pitch);
+                    roll = (1.0285 * roll);
+                
+                    rollArray[num] = roll;
+                    pitchArray[num]= pitch;
+                }
+                
+                if(distanceSensor1.checkForDataReady()){
+                    distance1 = distanceSensor1.getDistance();
+                    distanceSensor1.clearInterrupt(); 
+                    distance1Array[num] = distance1;                  
+                }
+
+                if(distanceSensor2.checkForDataReady()){
+                    distance2 = distanceSensor2.getDistance();
+                    distanceSensor2.clearInterrupt();
+                    distance2Array[num] = distance2;
+                }
+
+                delay(20); //delay to ensure array not filled to fast and not repeated values
+                num++;
+            }
+
+            distanceSensor1.stopRanging(); //write configuration bytes to stop measurement
+            distanceSensor2.stopRanging();
+
+            num = 0;//resetting the number count
+
+            while ((num < arraySize) && (timeArray[num] != 0)){ //doing this loop for 5 seconds for this test
+                //using similar string output structure to millis_loop
+                tx_estring_value.clear();
+                tx_estring_value.append(num); //to keep count
+                tx_estring_value.append(" T|R|P|D1|D2: ");
+                tx_estring_value.append(timeArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(rollArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(pitchArray[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(distance1Array[num]);
+                tx_estring_value.append(" ");
+                tx_estring_value.append(distance2Array[num]);
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                num++;
+            }
+            break;
+        }
+```
+This is my updated notification handler below.
+```python
+def notif_handler(uuid, byteArray):
+    rec_string = ble.bytearray_to_string(byteArray)
+    strArray = rec_string.split(" ") #using space as a delimeter since my output from arduino is T: nnnnn and thus space will split it perfectly
+
+    #using this if statement so that if the recieved string is not the time string it prints the whole thing instead of just the millis 
+    if strArray[0] == "T:":
+        print(strArray[1])
+    elif strArray[1] == "Time|Temp:":
+        print(strArray[0] + "|Time: " + strArray[2] + " |Temp: " + strArray[3])
+    elif strArray[1] == "T|R|P:":
+        print(strArray[0] + "|Time: " + strArray[2] + " |Roll: " + strArray[3]+ " |Pitch: " + strArray[4])
+    elif strArray[1] == "T|R|P|D1|D2:":
+        print(strArray[0] + "|Time: " + strArray[2] + " |Roll: " + strArray[3]+ " |Pitch: " + strArray[4] + " |Distance1: " + strArray[5]+ " |Distance2: " + strArray[6])
+        add = [float(strArray[0]), float(strArray[2]), float(strArray[3]), float(strArray[4]), float(strArray[5]), float(strArray[6])]
+        IMUTOF.append(add)
+    else:
+        print(rec_string)
+```
+These are the graphs that I made with some of my IMU data and my TOF data. 
+{{image(path = "./images/Screenshot 2026-03-04 104701.png",src = "./images/Screenshot 2026-03-04 104701.png", alt = "IMU Data")}}
+{{image(path = "./images/Screenshot 2026-03-04 105408.png",src = "./images/Screenshot 2026-03-04 105408.png", alt = "TOF Data")}}
+
 # Discussion
 One great learning was that taking the protective film off really does improve the measurements lol, and after taking the film off my measurements improved a lot.
 
 # Collaboration
-I referenced Trevor Dales, Lucca Correia, and Sarah Grace Brown's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results, and also for finding the difference in time between the time stamps.
+I referenced Trevor Dales and Lucca Correia's websites for issues I faced in Lab 3, mainly with figuring out how to control 2 different ToF sensors at the same time. I also used Google Gemini to help with making the code to plot the ToF results, and also for finding the difference in time between the time stamps, and also for figuring out how to efficienlty use python lists. I also worked with Aidan to troubleshoot to my arduino code to transmit TOF and IMU data. 
