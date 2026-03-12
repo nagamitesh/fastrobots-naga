@@ -71,13 +71,51 @@ For the power supply I wanted to emulate the battery as close as I could, and si
 I set up my power supply such that it was supplying ground to the ground on the motor controller, and the positive was connected to Vin. For the ossciliscope I set the ground alligator clip on the probe to the output that has a 0 duty cycle, and I set the probe on the one that I applied the 50% duty cycle analogWrite too. One issue I found is that the off part of the duty cycle kept moving a little bit, I think that this might just be due to my suboptimal osciliscope probing but overall it seemed good and responded to different duty cycles.
 
 This is an image of my setup.
-{{image(path = "./images/IMG_9438.PNG",src = "./images/IMG_9438.PNG", alt = "Oss Setup")}}
+{{image(path = "./images/IMG_9438.png",src = "./images/IMG_9438.png", alt = "Oss Setup")}}
 
 Here is the scope trace from my first motor driver.
-{{image(path = "./images/IMG_9439.PNG",src = "./images/IMG_1940.PNG", alt = "Oss Driver 1")}}
+{{image(path = "./images/IMG_9439.png",src = "./images/IMG_1940.png", alt = "Oss Driver 1")}}
 
 Here is the scope trace from my second motor driver. 
-{{image(path = "./images/IMG_9440.PNG",src = "./images/IMG_9440.PNG", alt = "Oss Driver 2")}}
+{{image(path = "./images/IMG_9440.png",src = "./images/IMG_9440.png", alt = "Oss Driver 2")}}
+
+## Testing Robot Movement
+### Testing with Power Supply
+Here is the movement of my robot with the power supply. As can be seen here the motor moves well in both directions and the limiting factor on speed currently is the current limit on the power supply.
+
+<iframe src="https://drive.google.com/file/d/1vvsBlo4AiUpNPqFlxvXm1HxRsaU2hQ-D/preview" width="640" height="480"></iframe>
+
+### Testing Both Motors with Battery
+Here I created some code to test if both of the motors are able to be driven at the same time by the battery. I am a little concerned because I had to epoxy one of my wheels and I think the epoxy might have leaked and caused some extra friction but I cleaned that up to eliminate that to the best of my ability. I think that the epoxy is definetly messing up the movement, but my code below shows the different PWM values I needed to use. 
+
+```cpp
+//Set up Pins
+const int DriveL1 = 1;
+const int DriveL2 = 0;
+const int DriveR1 = 2;
+const int DriveR2 = 3;
+
+
+  analogWrite(DriveL1, 40); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, 90); //moving forward
+  analogWrite(DriveR2, 0);
+
+  delay(3000);
+
+  analogWrite(DriveL2, 40); //moving backward
+  analogWrite(DriveL1, 0);
+  analogWrite(DriveR2, 90); //moving backward
+  analogWrite(DriveR1, 0);
+
+  delay(3000);
+```
+
+Here is the video of how that looked.
+<iframe src="https://drive.google.com/file/d/1mqQRgOv_4hR3CBbHsHYiqBm1f6jAC1IT/preview" width="640" height="480"></iframe>
+The low speed on the left drive set (video persepective right) was one of the main reasons the wheel set on video perspective right was so slow.
+
+
 
 # Discussion
 One interesting thing that I found is that if I flip the leads that were connected to the 50% duty cycle and 0% duty cycle pins incorrectly the scope trace becomes very weird and I'm not sure why this is but that was cool.
