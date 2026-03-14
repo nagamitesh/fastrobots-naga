@@ -79,6 +79,11 @@ Here is the scope trace from my first motor driver.
 Here is the scope trace from my second motor driver. 
 {{image(path = "./images/IMG_9440.png",src = "./images/IMG_9440.png", alt = "Oss Driver 2")}}
 
+## Image of Built Car
+This is an image of the car once I added all my components and all of my components should be visible to see. I integrated my sensors as well and I'm working on a little bit of a better mounting system for my TOF sensors to make it stable.
+{{image(path = "./images/car.jpg",src = "./images/car.jpg", alt = "Car Image")}}
+
+
 ## Testing Robot Movement
 ### Testing with Power Supply
 Here is the movement of my robot with the power supply. As can be seen here the motor moves well in both directions and the limiting factor on speed currently is the current limit on the power supply.
@@ -115,10 +120,23 @@ Here is the video of how that looked.
 <iframe src="https://drive.google.com/file/d/1mqQRgOv_4hR3CBbHsHYiqBm1f6jAC1IT/preview" width="640" height="480"></iframe>
 The low speed on the left drive set (video persepective right) was one of the main reasons the wheel set on video perspective right was so slow.
 
+### Lower PWM Limit
+For my lower PWM limit tests I found that to make it go slow and on the flower I needed 92 on the right set of wheels and 50 on the left set of wheels. I think that this change is due to the epoxy adding different amount of friction on the left set which makes it just need more power.
+
+<iframe src="https://drive.google.com/file/d/1BGQIji0MHNAWjzD8_TNnvx7LuuYcofcd/preview" width="640" height="480"></iframe>
+
+For my turns, I found that I needed ... on my right to start movement in a turning direction, and I needed .. on my left to start movement in the other turning direction.
+
+## Calibration
+For the calibration I used my turning script that turns on the motor for a set amount of time and changed the PWM values to make it go straight or make it change directions.
+
+
+## Open Loop Control
+For the open loop control I used the values that I found for the robot to go straight and then I added an offset to change the speed. I did a similar thing with my turning values and set variables to make it easier for me to update these values as time progresses incase I find that different values work better than others. 
 
 
 # Discussion
-One interesting thing that I found is that if I flip the leads that were connected to the 50% duty cycle and 0% duty cycle pins incorrectly the scope trace becomes very weird and I'm not sure why this is but that was cool.
+One interesting thing that I found is that if I flip the leads that were connected to the 50% duty cycle and 0% duty cycle pins incorrectly the scope trace becomes very weird and I'm not sure why this is but that was cool. The battery level also matters a lot for these tests which is something for me to note for the future.
 
 
 # Collaboration
