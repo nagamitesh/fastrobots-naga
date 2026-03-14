@@ -157,9 +157,52 @@ void loop() {
 ```
 
 
-
 ## Open Loop Control
-For the open loop control I used the values that I found for the robot to go straight and then I added an offset to change the speed. I did a similar thing with my turning values and set variables to make it easier for me to update these values as time progresses incase I find that different values work better than others. 
+For the open loop control I used the values that I found for the robot to go straight and I used those for the going straight sections. I did a similar thing with my turning values and set variables to make it easier for me to update these values as time progresses incase I find that different values work better than others. 
+
+Here the code that I used and my final results. 
+
+```cpp
+  analogWrite(DriveL1, StraightL); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, StraightR); //moving forward
+  analogWrite(DriveR2, 0);
+
+  delay(1000);
+
+  analogWrite(DriveL1, 0); //moving forward
+  analogWrite(DriveL2, StraightL);
+  analogWrite(DriveR1, 0); //moving forward
+  analogWrite(DriveR2, StraightR);
+
+  delay(1200);
+
+  analogWrite(DriveL1, TurnL+20); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, StraightR+10); //moving forward
+  analogWrite(DriveR2, 0);
+
+  delay(2000);
+
+  analogWrite(DriveL1, 0); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, 0); //moving forward
+  analogWrite(DriveR2, TurnR+20);
+
+  delay(1000);
+
+  analogWrite(DriveL1, 0); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, 0); //moving forward
+  analogWrite(DriveR2, 0);
+
+  while (1 == 1){
+    delay(3000);
+  }
+```
+ <iframe src="https://drive.google.com/file/d/19XcsFTmJKCJgyC9S-9AuRmYlOoYMaUCp/preview" width="640" height="480"></iframe>
+
+
 
 
 # Discussion
