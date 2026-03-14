@@ -125,10 +125,37 @@ For my lower PWM limit tests I found that to make it go slow and on the flower I
 
 <iframe src="https://drive.google.com/file/d/1BGQIji0MHNAWjzD8_TNnvx7LuuYcofcd/preview" width="640" height="480"></iframe>
 
-For my turns, I found that I needed ... on my right to start movement in a turning direction, and I needed .. on my left to start movement in the other turning direction.
+For my turns, I found that I needed roughly 133 on my right to start movement in a turning direction, and I needed 140 on my left to start movement in the other turning direction.
 
 ## Calibration
-For the calibration I used my turning script that turns on the motor for a set amount of time and changed the PWM values to make it go straight or make it change directions.
+For the calibration I used my PWM script that turns on the motor for a set amount of time and changed the PWM values to make it go straight.
+I needed 95 on the left and 112 on the right to make it go straight for the required distance. The video below shows that. An interesting observation was that once it started moving the left wheels seemed to be more dominant so I had to increase the right wheels a lot to compensate, I think that this might be because with the epoxy the stationary friction is more but the moving friction is not bad. I also think this could be due to lower amounts of grip on the floor and this might need more testing to verify.
+
+
+This is the code that I used:
+<iframe src="https://drive.google.com/file/d/15VB5V37nc5940D_AYsBQdmsFinzfLFjB/preview" width="640" height="480"></iframe>
+
+```cpp
+void loop() {
+  // put your main code here, to run repeatedly:
+  analogWrite(DriveL1, 95); //moving forward
+  analogWrite(DriveL2, 0);
+  analogWrite(DriveR1, 112); //moving forward
+  analogWrite(DriveR2, 0);
+
+  delay(3000);
+
+  analogWrite(DriveL2, 0); //moving none
+  analogWrite(DriveL1, 0);
+  analogWrite(DriveR2, 0); //moving none
+  analogWrite(DriveR1, 0);
+
+  while (1 == 1){
+    delay(3000);
+  }
+}
+```
+
 
 
 ## Open Loop Control
